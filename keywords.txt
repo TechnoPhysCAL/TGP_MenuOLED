@@ -1,0 +1,33 @@
+#######################################
+# Syntax Coloring Map for TGP Menu OLED
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+MenuOLED    KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+ajouterItemNumerique	KEYWORD2
+ajouterItemOnOff	KEYWORD2
+ajouterItemTexte	KEYWORD2
+refresh	KEYWORD2
+imprimeLigneTitreOLED	KEYWORD2
+imprimeLigneStatusOLED	KEYWORD2
+getItemValeur	KEYWORD2
+setItemValeur	KEYWORD2
+setMenuOn	KEYWORD2
+setMenuOff	KEYWORD2
+getMenuOnOff	KEYWORD2
+getNbItems	KEYWORD2
+actualiserUnItem	KEYWORD2
+######################################
+# Constants (LITERAL1)
+#######################################
+ITEM_NON_EDITABLE	LITERAL1
+ITEM_EDITABLE	LITERAL1
+SANS_APPEL_CALLBACK	LITERAL1
+AVEC_APPEL_CALLBACK	LITERAL1
