@@ -40,14 +40,6 @@ int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatiq
 //Déclaration de l'instance monMenu du type MenuOLED
 MenuOLED monMenu;
 
-//Déclaration numéro de broches des Dels
-
-//Paramètres PWM pour LED2
-const int pinLED2 = 2;    //Broche D2 sur PROTOTPHYS 2V1
-const int freq = 5000;    //Fréquence du PWM
-const int ledChannel = 0; //Canal utilisé; choix entre 0 et 15
-const int resolution = 8; //Résolution 8 bits; duty de 0 à 255
-
 //Initialisation du message local pour restaurer le menu
 void initMessage()
 {
@@ -74,13 +66,6 @@ void setup()
 {
   Serial.begin(115200);    //Pour la commucation série
   Serial.println(nomProg); //Transmission du nom du programme
-
-  //Configuration PWM fonctionnalités pour LED2 (spécifique à ESP32)
-  ledcSetup(ledChannel, freq, resolution);
-  //Attribution du canal PWM à la broche pour LED2 (spécifique à ESP32)
-  ledcAttachPin(pinLED2, ledChannel);
-  //Initialisation du duty cycle du PWM (spécifique à ESP32)
-  ledcWrite(ledChannel, 0); //duty Cycle de 0
 
   //Initialisation du menu
   monMenu.begin();
@@ -163,26 +148,32 @@ void ajusteLED1()
   //Ajuste la DEL rouge la valeur courante de noItemLED1 du menu
   monMenu.rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
 }
+
 void ajusteLED2()
 {
-  //Ajuste PWM de LED2 selon la valeur courante de noItemLED2 du menu
+  //Ajuste la luminoité de la DEL verte selon la valeur courante de noItemLED2 du menu
   int valeur = monMenu.getItemValeur(noItemLED2); //Lecture de la valeur courante
-  if (valeur == 0)
+
+  if (valeur == 0)//Cas pour la valeur courante "0" correspondant à "Eteint"
   {
-    ledcWrite(ledChannel, 0);
-  } //Cas pour la valeur courante "0" correspondant à "Eteint"
-  else if (valeur == 1)
+    monMenu.verte.set(false);
+  } 
+  else if (valeur == 1)//Cas pour la valeur courante "1" correspondant à "Bas"
   {
-    ledcWrite(ledChannel, 20);
-  } //Cas pour la valeur courante "1" correspondant à "Bas"
-  else if (valeur == 2)
+    monMenu.verte.set(true);
+    monMenu.verte.setBrightness(8);
+  } 
+  else if (valeur == 2) //Cas pour la valeur courante "2" correspondant à "Moyen"
   {
-    ledcWrite(ledChannel, 80);
-  } //Cas pour la valeur courante "2" correspondant à "Moyen"
-  else if (valeur == 3)
+    monMenu.verte.set(true);
+    monMenu.verte.setBrightness(30);
+   
+  }
+  else if (valeur == 3) //Cas pour la valeur courante "3" correspondant à "Fort"
   {
-    ledcWrite(ledChannel, 255);
-  } //Cas pour la valeur courante "3" correspondant à "Fort"
+    monMenu.verte.set(true);
+    monMenu.verte.setBrightness(100);
+  }
 }
 void callBackItemX()
 {
