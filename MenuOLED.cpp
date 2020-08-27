@@ -42,6 +42,7 @@
 /****************************************************************
 //version : 2.0.0
 //1.  Conversion à la nouvelle librairie ProtoTGP
+//2. A l'appel de setItemValeur, le callback sera appelé seulement si la nouvelle valeur est différente de l'ancienne.
 //Par : Claude Bouchard
 //Date: septempbre 2020
 //***************************************************************/
@@ -102,7 +103,6 @@ MenuOLED::MenuOLED() : ProtoTGP()
   _nbMenuItem = 0;
   _posSouligne = 0;
   _flagMenuOnOff = true;
-
 }
 
 //***************************************************************************************
@@ -125,9 +125,9 @@ void MenuOLED::begin()
   _noMenuItemPremiereLigneOLED = 0; //initialisation du no de l'item sur la première ligne du OLED
 
   //Initialisation de tous les boutons
-  
-  setLongPressDelay(1000); //Pour ajuster le temps de l'état "MAINTENU"
-  setLongPressInterval(50);  //Pour ajuster le temps de l'état "MAINTENANT" (répétition)
+
+  setLongPressDelay(1000);  //Pour ajuster le temps de l'état "MAINTENU"
+  setLongPressInterval(50); //Pour ajuster le temps de l'état "MAINTENANT" (répétition)
 
   // Clear buffer OLED
   ecran.clearDisplay();
@@ -468,12 +468,18 @@ void MenuOLED::setItemValeur(int noItem, int valeur, bool callfctback)
     if (valeur > _menuTab[noItem]->maxVal)
     {
       valeur = _menuTab[noItem]->maxVal;
-    } //Limitation maximale
-    _menuTab[noItem]->value = valeur;
-    printItemMenuOLED(noItem);
-    if (callfctback == AVEC_APPEL_CALLBACK)
-    { //Ajout condition version 1.2.0
-      (*_menuTab[noItem]->callbackFct)();
+    }
+    //Limitation maximale
+
+    //Effectuer le changement de valeur et l'appel du callback seulement si la nouvelle valeur est différente de l'ancienne
+    if (_menuTab[noItem]->value != valeur)
+    {
+      _menuTab[noItem]->value = valeur;
+      printItemMenuOLED(noItem);
+      if (callfctback == AVEC_APPEL_CALLBACK)
+      { //Ajout condition version 1.2.0
+        (*_menuTab[noItem]->callbackFct)();
+      }
     }
   }
 } // FIN MenuOLED::setItemValeur
@@ -484,7 +490,7 @@ Inputs:
   Aucun
 Output:
   bool  : "false" pour menu OFF et "true" pour menu ON
-Note: 
+Note: L'appel du callback se fera seulement si la nouvelle valeur est différente de l'ancienne.
 ****************************************************************/
 bool MenuOLED::getMenuOnOff(void)
 {
@@ -527,7 +533,6 @@ void MenuOLED::setMenuOff(void)
   if (_flagMenuOnOff == true)
   {
     _flagMenuOnOff = false;
-    ecran.clearDisplay();
   }
 } //FIN MenuOLED::setMenuOff
 
@@ -683,7 +688,6 @@ void MenuOLED::printItemMenuOLED(int16_t menuItem)
       ecran.setCursor(0, _posLigne[noLigne] + 2);
       ecran.print(_stringOne);
     }
-    ecran.display();
   }
 } //MenuOLED::printItemMenuOLED
 
@@ -764,7 +768,6 @@ void MenuOLED::heartbeat(void)
       color = WHITE;
     }
     ecran.fillRect(ecran.width() - 3, ecran.height() - 3, 3, 3, color); //Petit carré à droite au bas de l'écran
-    ecran.display();
   }
 } //FIN MenuOLED::heartbeat
 
@@ -832,7 +835,7 @@ void MenuOLED::restoreTitreOLED()
   ecran.setCursor(0, 0);
   ecran.print(_stringTitre);
   ecran.drawLine(0, 9, ecran.width() - 1, 9, WHITE); //Trace ligne en-dessous de l'entête
-  ecran.display();
+
 } //FIN MenuOLED::restoreTitreOLED
 
 /****************************************************************
@@ -852,5 +855,5 @@ void MenuOLED::restoreStatusOLED()
   ecran.setCursor(0, ecran.height() - 7);
   ecran.print(_stringStatus);
   ecran.drawLine(0, ecran.height() - 9, ecran.width() - 1, ecran.height() - 9, WHITE); //Trace ligne en-dessous de l'entête
-  ecran.display();
+
 } //FIN MenuOLED::restoreStatusOLED()
