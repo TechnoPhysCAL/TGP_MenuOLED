@@ -4,11 +4,10 @@ Permet de créer un menu déroulant sur un affichage OLED de type SSD1306.
 
 Cette librairie est construite sur la librairie [TGP ProtoTGP](https://github.com/TechnoPhysCAL/TGP_ProtoTGP)
 
-## Légende
+## Détails
 
+### Légende 
 ![Légende](legende.png)
-
-
 
 1.	Ligne réservée pour le Titre du menu avec le souligné en dessous. On modifie le titre à l’aide de la méthode « imprimeLigneTitreOLED »
 2.	Le caractère « > » indique l’item du menu présentement sélectionné ; pour éditer sa valeur courante, il faut appuyer sur le bouton SELECTION.
@@ -25,7 +24,7 @@ Cette librairie est construite sur la librairie [TGP ProtoTGP](https://github.co
 13.	Bouton DROITE : sert à déplacer vers la droite le caractère de soulignement lors de l’édition de la valeur courante d’un item de type NUMERIQUE.
 14.	Bouton SELECTION sert à entrer et sortir du mode d’édition de la valeur courante de l’item. À la sortie du mode d’édition, la fonction « callback » associée à l’item est automatiquement appelée.
 
-## Utilisation
+### Explications
 
 La création du menu est simplifiée par l’utilisation des méthodes particulières d’ajout d’item de type NUMERIQUE, ON-OFF ou TEXTE. Un item comprend une étiquette, une valeur courante, des limites, un type d’affichage particulier et une référence à une fonction callback. Cette dernière est appelée automatiquement lors de la sortie du mode d’édition de l’item.
 
@@ -33,14 +32,73 @@ La création du menu est simplifiée par l’utilisation des méthodes particuli
 
 Deux méthodes particulières, « imprimeLigneTitreOLED » et « imprimeLigneStatusOLED », servent respectivement à l’impression d’un Titre souligné au haut de l’écran ainsi que l’impression d’une ligne Status au bas. Cette dernière est surmontée d’une ligne horizontale. Le coin inférieur droit de l’écran est réservé au clignotement d’un petit carré en guise de « Heartbeat ».
 
-Le menu est actualisé par la méthode « rafraichir ». Celle-ci devrait être appelée régulièrement ; on la place normalement dans le « void loop() » d’un programme Arduino. La navigation à travers le menu ainsi que l’édition des valeurs courantes se font par l’entremise des 5 boutons. Les méthodes de la librairie « ClavierGenerique » sont aussi disponibles.
+Le menu est actualisé par la méthode « refresh ». Celle-ci devrait être appelée régulièrement ; on la place normalement dans le « void loop() » d’un programme Arduino. La navigation à travers le menu ainsi que l’édition des valeurs courantes se font par l’entremise des 5 boutons. Les méthodes de la librairie « ClavierGenerique » sont aussi disponibles.
 
 Finalement, les méthodes « setMenuOff » et « setMenuOn » permettent de désactiver et réactiver le menu. À la désactivation du menu, l’affichage OLED est effacé et la navigation par les boutons est désactivée ; seul le Heartbeat reste actif. Le programme principal peut alors prendre possession de l’affichage OLED pour son propre usage. L’état des boutons demeure toujours accessible via la méthode appropriée. Au retour de l’affichage par la méthode « setMenuOn », le menu est reconstitué tel qu’il était avant la désactivation. La méthode « getMenuOnOff » informe de l’état ON ou OFF du menu.
-
 
 ### Notes
 
  Les méthodes publiques de la classe ProtoTGP sont toutes disponibles via l'objet.
+
+## Utilisation
+
+```cpp
+
+#include <MenuOLED.h>
+
+void ajusteLED1(void);   
+void ajusteLED2(void);   
+void callBackItemX(void);
+void callBackItemY(void);
+
+
+int noItemLED1, noItemLED2, noItemX, noItemY;
+
+char *niveauLED2[] = {"Eteint", "Bas", "Moyen", "Fort"};
+
+int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); 
+
+MenuOLED monMenu;
+
+void setup()
+{
+  monMenu.begin();
+
+  noItemLED1 = monMenu.ajouterItemOnOff("LED 1  = ", &ajusteLED1, 0);
+  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, &niveauLED2[0]);
+  noItemX = monMenu.ajouterItemNumerique("Item X = ", &callBackItemX, 0, 0, 512);
+  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -500000, 500000);
+
+  monMenu.imprimeLigneTitreOLED("Exemple1_Basic");
+
+  monMenu.imprimeLigneStatusOLED("Sans erreur");
+}
+
+void loop()
+{
+  monMenu.refresh();
+}
+
+//Définition des fonctions callback
+void ajusteLED1()
+{
+  //Tâche à faire lorsque l'item du menu noItemLED1 change de valeur
+}
+
+void ajusteLED2()
+{
+    //Tâche à faire lorsque  l'item du menu noItemLED2 change de valeur
+}
+
+void callBackItemX()
+{
+    //Tâche à faire lorsque l'item du menu noItemX change de valeur
+}
+void callBackItemY()
+{
+     //Tâche à faire lorsque l'item du menu noItemY change de valeur
+}
+```
 
 ## Constructeurs
 ```cpp
