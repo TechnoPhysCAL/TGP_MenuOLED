@@ -49,10 +49,8 @@ Finalement, les méthodes « setMenuOff » et « setMenuOn » permettent de dés
 void ajusteLED1(void);   
 void ajusteLED2(void);   
 void callBackItemX(void);
-void callBackItemY(void);
 
-
-int noItemLED1, noItemLED2, noItemX, noItemY;
+int noItemLED1, noItemLED2, noItemX;
 
 char *niveauLED2[] = {"Eteint", "Bas", "Moyen", "Fort"};
 
@@ -67,7 +65,6 @@ void setup()
   noItemLED1 = monMenu.ajouterItemOnOff("LED 1  = ", &ajusteLED1, 0);
   noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, &niveauLED2[0]);
   noItemX = monMenu.ajouterItemNumerique("Item X = ", &callBackItemX, 0, 0, 512);
-  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -500000, 500000);
 
   monMenu.imprimeLigneTitreOLED("Exemple1_Basic");
 
@@ -94,10 +91,7 @@ void callBackItemX()
 {
     //Tâche à faire lorsque l'item du menu noItemX change de valeur
 }
-void callBackItemY()
-{
-     //Tâche à faire lorsque l'item du menu noItemY change de valeur
-}
+
 ```
 
 ## Constructeurs
