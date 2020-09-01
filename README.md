@@ -53,8 +53,7 @@ void callBackItemX(void);
 int noItemLED1, noItemLED2, noItemX;
 
 char *niveauLED2[] = {"Eteint", "Bas", "Moyen", "Fort"};
-
-int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); 
+int nbChoixLED2 = 4; 
 
 MenuOLED monMenu;
 
