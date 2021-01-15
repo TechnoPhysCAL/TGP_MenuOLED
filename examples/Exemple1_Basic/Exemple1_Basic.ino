@@ -36,7 +36,7 @@ void callBackItemZ(void); //Routine callback pour l'item Z
 int noItemLED1, noItemLED2, noItemX, noItemY, noItemZ;
 
 //Déclaration du tableau de pointeurs de texte utile pour affichage en mode texte de l'item LED2
-char *niveauLED2[] = {"Eteint", "Bas", "Moyen", "Fort"};
+char *niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
 int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 

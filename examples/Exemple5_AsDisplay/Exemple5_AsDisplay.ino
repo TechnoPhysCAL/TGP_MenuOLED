@@ -11,8 +11,8 @@ La température est simulée par une rampe montante et descendnte entre 0oC et 1
 Le menu est composé de 3 items:
   1- Alarme :   Item de type booléen dont la fonction callback sert à controler l'état de la Del rouge.
                 L'usager peut éditer cet item; il s'en sert entre autres pour éteindre l'alarme.
-  2- Temp. oC : Cet item sert d'affichage pour la température; il n'est pas éditable par l'usager.
-  3- Seuil oC : L'usager édite cet item pour ajuster le seuil de température déclenchant une alarme.
+  2- Temp. °C : Cet item sert d'affichage pour la température; il n'est pas éditable par l'usager.
+  3- Seuil °C : L'usager édite cet item pour ajuster le seuil de température déclenchant une alarme.
 
 Note: Ce programme est conçu pour la carte PROTOTPHYS 2V1.
 
@@ -81,8 +81,8 @@ void setup()
 
   //Construction du menu par la définition de chacun des items
   noItemAlarme = monMenu.ajouterItemOnOff("Alarme   = ", &alarmeCallback, 0);
-  noItemTemp = monMenu.ajouterItemNumerique("Temp. oC = ", &TempCallback, 0, -100, 200, ITEM_NON_EDITABLE); //Attention au dernier paramètre
-  noItemSeuil = monMenu.ajouterItemNumerique("Seuil oC = ", &seuilCallback, 80, -20, 120);                  //Seuil ajustable entre -20 et 120; valeur intiale 80.
+  noItemTemp = monMenu.ajouterItemNumerique("Temp. °C = ", &TempCallback, 0, -100, 200, ITEM_NON_EDITABLE); //Attention au dernier paramètre
+  noItemSeuil = monMenu.ajouterItemNumerique("Seuil °C = ", &seuilCallback, 80, -20, 120);                  //Seuil ajustable entre -20 et 120; valeur intiale 80.
 
   //Impression de la ligne Titre
   monMenu.imprimeLigneTitreOLED("Exemple5_AsDisplay");
