@@ -94,8 +94,14 @@ _menuItem_t *_menuTab[_NB_MAX_ITEM]; //Tableau de pointeurs de l'ensemble du men
 //***************************************************************
 // Constructeur
 //***************************************************************
-MenuOLED::MenuOLED() : ProtoTGP()
+MenuOLED::MenuOLED(Ecran* e, Bouton* g, Bouton* d, Bouton* h, Bouton* n, Bouton* s)
 {
+  ecran = e;
+  gauche = g;
+  droite = d;
+  haut = h;
+  bas = n;
+  selection = s;
   _flagModeEdit = false;
   _menuItemActif = 0;
   _precedent_menuItemActif = 0;
@@ -118,19 +124,13 @@ Note: Cette fonction utilise la librairie "TGP ProtoTGP".
 ****************************************************************/
 void MenuOLED::begin()
 {
-  ProtoTGP::begin();
-
+  
   _menuItemActif = 0;               //Initialisation de l'item actif
   _precedent_menuItemActif = 0;     //Initialisation de l'item actif précédent
   _noMenuItemPremiereLigneOLED = 0; //initialisation du no de l'item sur la première ligne du OLED
 
-  //Initialisation de tous les boutons
-
-  setLongPressDelay(1000);  //Pour ajuster le temps de l'état "MAINTENU"
-  setLongPressInterval(50); //Pour ajuster le temps de l'état "MAINTENANT" (répétition)
-
   // Clear buffer OLED
-  ecran.clearDisplay();
+  ecran->clearDisplay();
 
   imprimeLigneTitreOLED("Titre");
   imprimeLigneStatusOLED("Status");
@@ -255,7 +255,13 @@ Note: Cette fonction suit une logique "state machine" basée principalement
 void MenuOLED::refresh()
 {
   //Mise à jour de de ProtoTGP
-  ProtoTGP::refresh();
+  ecran->refresh();
+  gauche->refresh();
+  droite->refresh();
+  haut->refresh();
+  bas->refresh();
+  selection->refresh();
+
   //Mise à jour du heartbeat
   heartbeat();
   // Rafraichissement de l'affichage s'il n'est pas OFF
@@ -266,7 +272,7 @@ void MenuOLED::refresh()
     if (_flagModeEdit == true)
     {
       //On vérifie d'abors si on doit sortir du mode d'édition
-      if (selection.isPressed() /*|| flagRemote == true*/)
+      if (selection->isPressed() /*|| flagRemote == true*/)
       {
         _flagModeEdit = false;
         _increment = 0;
@@ -278,13 +284,13 @@ void MenuOLED::refresh()
       else
       {
         //1er - On ajuste le souligné du digit selon boutons DROITE et GAUCHE pour l'édition de valeur numérique
-        if (droite.isPressed() && _menuTab[_menuItemActif]->typeAffichage == AFFICHENUMERIQUE)
+        if (droite->isPressed() && _menuTab[_menuItemActif]->typeAffichage == AFFICHENUMERIQUE)
         { //Correction version 1.2.0
           _posSouligne--;
           limitePosSouligne();
           updateMenuOLED();
         }
-        else if (gauche.isPressed() && _menuTab[_menuItemActif]->typeAffichage == AFFICHENUMERIQUE)
+        else if (gauche->isPressed() && _menuTab[_menuItemActif]->typeAffichage == AFFICHENUMERIQUE)
         { //Correction version 1.2.0
           _posSouligne++;
           limitePosSouligne();
@@ -292,7 +298,7 @@ void MenuOLED::refresh()
         }
         //2e - On ajuste l'incrément de la valeur courante
 
-        if (haut.isPressed() || haut.isLongPressed())
+        if (haut->isPressed() || haut->isLongPressed())
         {
           if (_menuTab[_menuItemActif]->typeAffichage == AFFICHENUMERIQUE)
           {
@@ -303,7 +309,7 @@ void MenuOLED::refresh()
             _increment = 1;
           }
         }
-        else if (bas.isPressed() || bas.isLongPressed())
+        else if (bas->isPressed() || bas->isLongPressed())
         {
           if (_menuTab[_menuItemActif]->typeAffichage == AFFICHENUMERIQUE)
           {
@@ -368,13 +374,13 @@ void MenuOLED::refresh()
     else
     {
       //On vérifie d'abors si on doit aller en mode d'édition
-      if (selection.isPressed() && _menuTab[_menuItemActif]->editable == ITEM_EDITABLE)
+      if (selection->isPressed() && _menuTab[_menuItemActif]->editable == ITEM_EDITABLE)
       { //Ajout bool editable version 1.2.0
         _flagModeEdit = true;
         updateMenuOLED(); //Pour afficher le char du mode edition
       }
       //On execute la navigation dans le menu selon l'état des boutons
-      else if (haut.isPressed() || haut.isLongPressed())
+      else if (haut->isPressed() || haut->isLongPressed())
       {
         _precedent_menuItemActif = _menuItemActif; //Pour signifier un changement de menu actif
         if (_menuItemActif > 0)
@@ -383,7 +389,7 @@ void MenuOLED::refresh()
           updateMenuOLED();
         }
       }
-      else if (bas.isPressed() || bas.isLongPressed())
+      else if (bas->isPressed() || bas->isLongPressed())
       {
         _precedent_menuItemActif = _menuItemActif; // Pour signifier un changement d'item actif
         if (_menuItemActif < _nbMenuItem - 1)
@@ -512,8 +518,7 @@ void MenuOLED::setMenuOn(void)
   if (_flagMenuOnOff == false)
   {
     _flagMenuOnOff = true;
-    ProtoTGP::begin(); // initialiser ProtoTGP
-    ecran.clearDisplay();
+    ecran->clearDisplay();
     restoreTitreOLED();      //Pour restaurer le Titre sur OLED
     printAllItemsMenuOLED(); //Pour restaurer l'affichage du menu
     restoreStatusOLED();     //Pour restaurer le Status sur OLED
@@ -667,12 +672,12 @@ void MenuOLED::printItemMenuOLED(int16_t menuItem)
       _stringOne = _stringOne + String("<");
     }
     //Imprime l'item
-    ecran.setTextSize(1);
-    ecran.setTextColor(WHITE);
-    ecran.invertDisplay(false);
-    ecran.fillRect(0, _posLigne[noLigne], ecran.width(), 10, BLACK); //Pour effacer la ligne
-    ecran.setCursor(0, _posLigne[noLigne]);
-    ecran.print(_stringOne);
+    ecran->setTextSize(1);
+    ecran->setTextColor(WHITE);
+    ecran->invertDisplay(false);
+    ecran->fillRect(0, _posLigne[noLigne], ecran->width(), 10, BLACK); //Pour effacer la ligne
+    ecran->setCursor(0, _posLigne[noLigne]);
+    ecran->print(_stringOne);
 
     //Imprime souligné du digit en édition
     if (_flagModeEdit == true && menuItem == _menuItemActif && _menuTab[menuItem]->typeAffichage == 0)
@@ -685,8 +690,8 @@ void MenuOLED::printItemMenuOLED(int16_t menuItem)
         _stringOne += String(" ");
       }
       _stringOne += String("_");
-      ecran.setCursor(0, _posLigne[noLigne] + 2);
-      ecran.print(_stringOne);
+      ecran->setCursor(0, _posLigne[noLigne] + 2);
+      ecran->print(_stringOne);
     }
   }
 } //MenuOLED::printItemMenuOLED
@@ -767,7 +772,7 @@ void MenuOLED::heartbeat(void)
     {
       color = WHITE;
     }
-    ecran.fillRect(ecran.width() - 3, ecran.height() - 3, 3, 3, color); //Petit carré à droite au bas de l'écran
+    ecran->fillRect(ecran->width() - 3, ecran->height() - 3, 3, 3, color); //Petit carré à droite au bas de l'écran
   }
 } //FIN MenuOLED::heartbeat
 
@@ -828,13 +833,13 @@ Note:
 ****************************************************************/
 void MenuOLED::restoreTitreOLED()
 {
-  ecran.setTextSize(1);
-  ecran.setTextColor(WHITE);
-  ecran.invertDisplay(false);
-  ecran.fillRect(0, 0, ecran.width(), 10, BLACK); //Pour effacer le titre et la ligne en dessous
-  ecran.setCursor(0, 0);
-  ecran.print(_stringTitre);
-  ecran.drawLine(0, 9, ecran.width() - 1, 9, WHITE); //Trace ligne en-dessous de l'entête
+  ecran->setTextSize(1);
+  ecran->setTextColor(WHITE);
+  ecran->invertDisplay(false);
+  ecran->fillRect(0, 0, ecran->width(), 10, BLACK); //Pour effacer le titre et la ligne en dessous
+  ecran->setCursor(0, 0);
+  ecran->print(_stringTitre);
+  ecran->drawLine(0, 9, ecran->width() - 1, 9, WHITE); //Trace ligne en-dessous de l'entête
 
 } //FIN MenuOLED::restoreTitreOLED
 
@@ -848,12 +853,12 @@ Note:
 ****************************************************************/
 void MenuOLED::restoreStatusOLED()
 {
-  ecran.setTextSize(1);
-  ecran.setTextColor(WHITE);
-  ecran.invertDisplay(false);
-  ecran.fillRect(0, ecran.height() - 7, ecran.width() - 4, 10, BLACK); //Pour effacer la ligne sauf Heartbeat
-  ecran.setCursor(0, ecran.height() - 7);
-  ecran.print(_stringStatus);
-  ecran.drawLine(0, ecran.height() - 9, ecran.width() - 1, ecran.height() - 9, WHITE); //Trace ligne en-dessous de l'entête
+  ecran->setTextSize(1);
+  ecran->setTextColor(WHITE);
+  ecran->invertDisplay(false);
+  ecran->fillRect(0, ecran->height() - 7, ecran->width() - 4, 10, BLACK); //Pour effacer la ligne sauf Heartbeat
+  ecran->setCursor(0, ecran->height() - 7);
+  ecran->print(_stringStatus);
+  ecran->drawLine(0, ecran->height() - 9, ecran->width() - 1, ecran->height() - 9, WHITE); //Trace ligne en-dessous de l'entête
 
 } //FIN MenuOLED::restoreStatusOLED()

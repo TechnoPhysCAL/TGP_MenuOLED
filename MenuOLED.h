@@ -1,7 +1,8 @@
 #ifndef __MenuOLED_H__
 #define __MenuOLED_H__
 
-#include "ProtoTGP.h"
+#include "Bouton.h"
+#include "Ecran.h"
 
 #define _NB_MAX_ITEM 128          //Nombre maximale d'item dans le menu
 #define ITEM_NON_EDITABLE false   //Pour méthodes d'ajout d'item
@@ -12,10 +13,10 @@
 /******************************************************************************
 * Definitions
 ******************************************************************************/
-class MenuOLED : public ProtoTGP
+class MenuOLED
 {
 public:
-    MenuOLED();
+    MenuOLED(Ecran* ecran, Bouton* gauche, Bouton* droite, Bouton* haut, Bouton* bas, Bouton* selection);
     void begin();                                                                                                                                   //Pour initialiser
     int ajouterItemNumerique(const char *Etiquette, void (*callbackFct)(), int ValeurInitiale, int ValeurMin, int ValeurMax, bool editable = true); //Pour ajouter un item de type Numérique au menu
     int ajouterItemOnOff(const char *Etiquette, void (*callbackFct)(), int ValeurInitiale, bool editable = true);                                   //Pour ajouter un item de type On-Off au menu, 0=OFF, 1=ON
@@ -41,5 +42,11 @@ private:
     int16_t add_and_saturate(int16_t x, int16_t y); //Fonction pour éviter le débordement 16 bits lors d'une somme
     void restoreTitreOLED(void);                    //Fonction pour restaurer le Titre sur OLED
     void restoreStatusOLED(void);                   //Fonction pour restaurer le Status sur OLED
+    Bouton* gauche;
+    Bouton* droite;
+    Bouton* haut;
+    Bouton* bas;
+    Bouton* selection;                    //Déclaration des boutons
+    Ecran* ecran;
 };
 #endif

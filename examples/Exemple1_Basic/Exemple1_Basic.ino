@@ -22,6 +22,8 @@ Modification : CB, sept 2020
 */
 
 #include <MenuOLED.h>                        //Pour utiliser la librairie MenuOLED
+#include <BoutonPin.h>
+#include <DelPin.h>
 const char nomProg[] = "Exemple1_Basic.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
@@ -41,14 +43,36 @@ char *niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 
 //Déclaration de l'instance monMenu du type MenuOLED
-MenuOLED monMenu;
+BoutonPin gauche(33);
+BoutonPin droite(39);
+BoutonPin haut(34);
+BoutonPin bas(35);
+BoutonPin selection(36);
+
+Ecran ecran;
+
+DelPin rouge(4);
+DelPin verte(2);
+
+
+MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
 
 void setup()
 {
   Serial.begin(115200);    //Pour la communication série
   Serial.println(nomProg); //Transmission du nom du programme
 
-  //Initialisation de l'OLED et des boutons
+
+  ecran.begin();
+  gauche.begin();
+  droite.begin();
+  haut.begin();
+  bas.begin();
+  selection.begin();
+  
+  rouge.begin();
+  verte.begin();
+    //Initialisation de l'OLED et des boutons
   monMenu.begin();
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
@@ -88,13 +112,15 @@ void setup()
 void loop()
 {
   monMenu.refresh(); //Pour permettre le fonctionnement du menu
+  rouge.refresh();
+  verte.refresh();
 }
 
 //Définition des fonctions callback propes à chacun des items du menu
 void ajusteLED1()
 {
   //Ajuste la DEL rouge la valeur courante de noItemLED1 du menu
-  monMenu.rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
+  rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
 }
 
 void ajusteLED2()
@@ -104,23 +130,23 @@ void ajusteLED2()
 
   if (valeur == 0)//Cas pour la valeur courante "0" correspondant à "Eteint"
   {
-    monMenu.verte.set(false);
+    verte.set(false);
   } 
   else if (valeur == 1)//Cas pour la valeur courante "1" correspondant à "Bas"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(8);
+    verte.set(true);
+    verte.setBrightness(8);
   } 
   else if (valeur == 2) //Cas pour la valeur courante "2" correspondant à "Moyen"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(30);
+    verte.set(true);
+    verte.setBrightness(30);
    
   }
   else if (valeur == 3) //Cas pour la valeur courante "3" correspondant à "Fort"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(100);
+    verte.set(true);
+    verte.setBrightness(100);
   }
 }
 
