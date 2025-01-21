@@ -219,21 +219,14 @@ void callBackItemY()
   }
   else if (valeur == 2)
   {
-    //Cas pour la valeur courante "2"
-    //Modification de l'étiquette de l'item X pour valeur 2 de l'item Y
-    sprintf(itemZ_Etiquette, "Coco = "); //Modification de la variable caractère utilisée pour cette étiquette
-    monMenu.actualiserUnItem(noItemZ);   //Pour forcer le rafraichissement de cette ligne sans modification de la valeur courante
-  }
-  else if (valeur == 3)
-  {
     //Cas pour la valeur courante "3"
     //Rotation des valeurs texte de l'item X
-    String ptrbuf;
-    ptrbuf = xText[0];                 //On conserve le pointeur de l'élément 0
+    
+    String temp = xText[0];                 //On conserve le pointeur de l'élément 0
     xText[0] = xText[1];               //Décalage du pointeur 1 dans pointeur 0
     xText[1] = xText[2];               //Décalage du pointeur 2 dans pointeur 1
     xText[2] = xText[3];               //Décalage du pointeur 3 dans pointeur 2
-    xText[3] = ptrbuf;                 //Récupération du pointeur 0 dans pointeur 3
+    xText[3] = temp;                 //Récupération du pointeur 0 dans pointeur 3
     monMenu.actualiserUnItem(noItemX); //Pour forcer le rafraichissement de cette ligne sans modification de la valeur courante
   }
 }
