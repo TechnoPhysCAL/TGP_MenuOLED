@@ -2,13 +2,13 @@
 
 Permet de créer un menu déroulant sur un affichage OLED de type SSD1306. 
 
-Cette librairie est construite sur les librairies [TGP Bouton](https://github.com/TechnoPhysCAL/TGP_Bouton) et n'importe quelle classe implémentant la classe Adafruit_GFX, tel que [TGP Ecran](https://github.com/TechnoPhysCAL/TGP_Ecran).
+Cette librairie est construite sur les librairies [TGP Bouton](https://github.com/TechnoPhysCAL/TGP_Bouton) et n'importe quelle classe implémentant la classe Adafruit_SSD1306, tel que [TGP Ecran](https://github.com/TechnoPhysCAL/TGP_Ecran).
 
 
 ## Notes de version
 
 ### 2.0.0 : 
- - La dépendance à ProtoTGP est retiré; seuls les boutons et l'écran sont nécessaires à sont fonctionnement. Les boutons doivent être du type TGP Bouton, tandis que l'écran peut être n'importe quelle instance qui implémente la classe Adafruit_GFX.
+ - La dépendance à ProtoTGP est retiré; seuls les boutons et l'écran sont nécessaires à sont fonctionnement. Les boutons doivent être du type TGP Bouton, tandis que l'écran peut être n'importe quelle instance qui implémente la classe Adafruit_SSD1306.
 
 ## Utilisation
 
@@ -121,7 +121,7 @@ void callBackItemX()
 
 ## Constructeurs
 ```cpp
-MenuOLED(Adafruit_GFX* ecran, Bouton* gauche, Bouton* droite, Bouton* haut, Bouton* bas, Bouton* selection);
+MenuOLED(Adafruit_SSD1306* ecran, Bouton* gauche, Bouton* droite, Bouton* haut, Bouton* bas, Bouton* selection);
 ```
 Note : La création de l'écran et des boutons est de la responsabilité de l'utilisateur.
 

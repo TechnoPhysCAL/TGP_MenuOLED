@@ -2,7 +2,7 @@
 #define __MenuOLED_H__
 
 #include "Bouton.h"
-#include "Adafruit_GFX.h"
+#include "Adafruit_SSD1306.h"
 
 #define _NB_MAX_ITEM 128          //Nombre maximale d'item dans le menu
 #define ITEM_NON_EDITABLE false   //Pour méthodes d'ajout d'item
@@ -16,7 +16,7 @@
 class MenuOLED
 {
 public:
-    MenuOLED(Adafruit_GFX* adafruit_gfx, Bouton* gauche, Bouton* droite, Bouton* haut, Bouton* bas, Bouton* selection);
+    MenuOLED(Adafruit_SSD1306* adafruit_ss1306, Bouton* gauche, Bouton* droite, Bouton* haut, Bouton* bas, Bouton* selection);
     void begin();                                                                                                                                   //Pour initialiser
     int ajouterItemNumerique(const char *Etiquette, void (*callbackFct)(), int ValeurInitiale, int ValeurMin, int ValeurMax, bool editable = true); //Pour ajouter un item de type Numérique au menu
     int ajouterItemOnOff(const char *Etiquette, void (*callbackFct)(), int ValeurInitiale, bool editable = true);                                   //Pour ajouter un item de type On-Off au menu, 0=OFF, 1=ON
@@ -47,6 +47,6 @@ private:
     Bouton* haut;
     Bouton* bas;
     Bouton* selection;                    //Déclaration des boutons
-    Adafruit_GFX* ecran;
+    Adafruit_SSD1306* ecran;
 };
 #endif

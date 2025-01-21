@@ -100,7 +100,7 @@ _menuItem_t *_menuTab[_NB_MAX_ITEM]; //Tableau de pointeurs de l'ensemble du men
 //***************************************************************
 // Constructeur
 //***************************************************************
-MenuOLED::MenuOLED(Adafruit_GFX* e, Bouton* g, Bouton* d, Bouton* h, Bouton* n, Bouton* s)
+MenuOLED::MenuOLED(Adafruit_SSD1306* e, Bouton* g, Bouton* d, Bouton* h, Bouton* n, Bouton* s)
 {
   ecran = e;
   gauche = g;
@@ -136,7 +136,7 @@ void MenuOLED::begin()
   _noMenuItemPremiereLigneOLED = 0; //initialisation du no de l'item sur la première ligne du OLED
 
   // Clear buffer OLED
-  ecran->fillScreen(BLACK);
+  ecran->clearDisplay();
 
   imprimeLigneTitreOLED("Titre");
   imprimeLigneStatusOLED("Status");
@@ -516,7 +516,7 @@ void MenuOLED::setMenuOn(void)
   if (_flagMenuOnOff == false)
   {
     _flagMenuOnOff = true;
-    ecran->fillScreen(BLACK); //Pour effacer l'écran
+    ecran->clearDisplay(); //Pour effacer l'écran
     restoreTitreOLED();      //Pour restaurer le Titre sur OLED
     printAllItemsMenuOLED(); //Pour restaurer l'affichage du menu
     restoreStatusOLED();     //Pour restaurer le Status sur OLED
