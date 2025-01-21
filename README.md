@@ -2,7 +2,15 @@
 
 Permet de créer un menu déroulant sur un affichage OLED de type SSD1306. 
 
-Cette librairie est construite sur la librairie [TGP ProtoTGP](https://github.com/TechnoPhysCAL/TGP_ProtoTGP)
+Cette librairie est construite sur les librairies [TGP Bouton](https://github.com/TechnoPhysCAL/TGP_Bouton) et n'importe quelle classe implémentant la classe Adafruit_GFX, tel que [TGP Ecran](https://github.com/TechnoPhysCAL/TGP_Ecran).
+
+
+## Notes de version
+
+### 2.0.0 : 
+ - La dépendance à ProtoTGP est retiré; seuls les boutons et l'écran sont nécessaires à sont fonctionnement. Les boutons doivent être du type TGP Bouton, tandis que l'écran peut être n'importe quelle instance qui implémente la classe Adafruit_GFX.
+
+## Utilisation
 
 ## Détails
 
@@ -36,15 +44,13 @@ Le menu est actualisé par la méthode « refresh ». Celle-ci devrait être app
 
 Finalement, les méthodes « setMenuOff » et « setMenuOn » permettent de désactiver et réactiver le menu. À la désactivation du menu, l’affichage OLED est effacé et la navigation par les boutons est désactivée ; seul le Heartbeat reste actif. Le programme principal peut alors prendre possession de l’affichage OLED pour son propre usage. L’état des boutons demeure toujours accessible via la méthode appropriée. Au retour de l’affichage par la méthode « setMenuOn », le menu est reconstitué tel qu’il était avant la désactivation. La méthode « getMenuOnOff » informe de l’état ON ou OFF du menu.
 
-### Notes
-
- Les méthodes publiques de la classe ProtoTGP sont toutes disponibles via l'objet.
-
 ## Utilisation
 
 ```cpp
 
 #include <MenuOLED.h>
+#include <BoutonPin.h>
+#include <Ecran.h>
 
 void ajusteLED1(void);   
 void ajusteLED2(void);   
@@ -55,10 +61,24 @@ int noItemLED1, noItemLED2, noItemX;
 char *niveauLED2[] = {"Eteint", "Bas", "Moyen", "Fort"};
 int nbChoixLED2 = 4; 
 
-MenuOLED monMenu;
+//Déclaration des instances de boutons et de l'écran
+BoutonPin gauche(33);
+BoutonPin droite(39);
+BoutonPin haut(34);
+BoutonPin bas(35);
+BoutonPin selection(36);
+Ecran ecran;
+MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
 
 void setup()
 {
+  ecran.begin();
+  gauche.begin();
+  droite.begin();
+  haut.begin();
+  bas.begin();
+  selection.begin();
+
   monMenu.begin();
 
   noItemLED1 = monMenu.ajouterItemOnOff("LED 1  = ", &ajusteLED1, 0);
@@ -72,6 +92,12 @@ void setup()
 
 void loop()
 {
+  ecran.refresh();
+  gauche.refresh();
+  droite.refresh();
+  haut.refresh();
+  bas.refresh();
+  selection.refresh();
   monMenu.refresh();
 }
 
@@ -95,17 +121,17 @@ void callBackItemX()
 
 ## Constructeurs
 ```cpp
-MenuOLED()
+MenuOLED(Adafruit_GFX* ecran, Bouton* gauche, Bouton* droite, Bouton* haut, Bouton* bas, Bouton* selection);
 ```
-L'initalisation est déjà implémenté par la classe [ProtoTGP](https://github.com/TechnoPhysCAL/TGP_ProtoTGP).
-
+Note : La création de l'écran et des boutons est de la responsabilité de l'utilisateur.
 
 ## Méthodes disponibles
 ```cpp
 void begin() 
 ```
 - Description
-Méthode publique pour initialiser la plateforme ProtoTPhys.
+Méthode publique pour initialiser le menu. L'initialisation de l'écran et des boutons est de la responsabilité de l'utilisateur.
+
 - Syntaxe
 ```cpp
  monMenu.begin();
@@ -184,14 +210,12 @@ Note: Il est primordial que le paramètre "nbChoix" soit égal (ou inférieur) �
    - 	  int    : retourne le numéro d'identification de l'item; la numérotation débute à zéro.
            : retourne « -1 » si les - Paramètres sont invalides pour créer ce type d'item.
 
-
-
 ---
 ```cpp
 void refresh()
 ```
 - Description
-Méthode publique pour actualiser le menu en prenant en compte l'état des boutons. Cette fonction gère entre autres la navigation à travers le menu ainsi que l'édition des items par les boutons. Cette méthode devrait être appelée régulièrement ; on la place normalement dans le « void loop() » d’un programme Arduino.
+Méthode publique pour actualiser le menu en prenant en compte l'état des boutons. Cette fonction gère entre autres la navigation à travers le menu ainsi que l'édition des items par les boutons. Cette méthode devrait être appelée régulièrement ; on la place normalement dans le « void loop() » d’un programme Arduino. L'actualisation de l'écran et des boutons est de la responsabilité de l'utilisateur.
 - Syntaxe
 ```cpp
 monMenu.refresh();

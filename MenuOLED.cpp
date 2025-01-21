@@ -46,6 +46,12 @@
 //Par : Claude Bouchard
 //Date: septempbre 2020
 //***************************************************************/
+/****************************************************************
+//version : 3.0.0
+//1.  Retrait de la dépendance à ProtoTGP
+//Par : Claude Bouchard
+//Date: janvier 2025
+//***************************************************************/
 
 #include "MenuOLED.h"
 //Constante pour le type d'affichage de la valeur courante de l'item
@@ -94,7 +100,7 @@ _menuItem_t *_menuTab[_NB_MAX_ITEM]; //Tableau de pointeurs de l'ensemble du men
 //***************************************************************
 // Constructeur
 //***************************************************************
-MenuOLED::MenuOLED(Ecran* e, Bouton* g, Bouton* d, Bouton* h, Bouton* n, Bouton* s)
+MenuOLED::MenuOLED(Adafruit_GFX* e, Bouton* g, Bouton* d, Bouton* h, Bouton* n, Bouton* s)
 {
   ecran = e;
   gauche = g;
@@ -124,13 +130,13 @@ Note: Cette fonction utilise la librairie "TGP ProtoTGP".
 ****************************************************************/
 void MenuOLED::begin()
 {
-  
+
   _menuItemActif = 0;               //Initialisation de l'item actif
   _precedent_menuItemActif = 0;     //Initialisation de l'item actif précédent
   _noMenuItemPremiereLigneOLED = 0; //initialisation du no de l'item sur la première ligne du OLED
 
   // Clear buffer OLED
-  ecran->clearDisplay();
+  ecran->fillScreen(BLACK);
 
   imprimeLigneTitreOLED("Titre");
   imprimeLigneStatusOLED("Status");
@@ -254,14 +260,6 @@ Note: Cette fonction suit une logique "state machine" basée principalement
 ****************************************************************/
 void MenuOLED::refresh()
 {
-  //Mise à jour de de ProtoTGP
-  ecran->refresh();
-  gauche->refresh();
-  droite->refresh();
-  haut->refresh();
-  bas->refresh();
-  selection->refresh();
-
   //Mise à jour du heartbeat
   heartbeat();
   // Rafraichissement de l'affichage s'il n'est pas OFF
@@ -518,7 +516,7 @@ void MenuOLED::setMenuOn(void)
   if (_flagMenuOnOff == false)
   {
     _flagMenuOnOff = true;
-    ecran->clearDisplay();
+    ecran->fillScreen(BLACK); //Pour effacer l'écran
     restoreTitreOLED();      //Pour restaurer le Titre sur OLED
     printAllItemsMenuOLED(); //Pour restaurer l'affichage du menu
     restoreStatusOLED();     //Pour restaurer le Status sur OLED

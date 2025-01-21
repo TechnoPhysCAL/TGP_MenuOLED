@@ -33,10 +33,13 @@ Résumé du fonctionnement du menu:
   
 Auteur: Jude Levasseur
 Date: 11 aout 2019
-Modification : CB, sept 2020
+Modification : CB, jan. 2025
 */
 
 #include <MenuOLED.h>                            //Pour utiliser la librairie MenuOLED
+#include <BoutonPin.h>
+#include <Ecran.h>	
+#include <DelPin.h>
 const char nomProg[] = "Exemple4_MenuModif.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
@@ -63,16 +66,39 @@ int nbChoix_itemX = sizeof(xText) / sizeof(xText[0]); //Calcul automatique
 //Variable pour le l'étquette de l'Item Z; pouvant ainsi être modifiable
 char itemZ_Etiquette[20] = "Item Z = ";
 
+//Déclaration des instances de boutons et de l'écran
+BoutonPin gauche(33);
+BoutonPin droite(39);
+BoutonPin haut(34);
+BoutonPin bas(35);
+BoutonPin selection(36);
+Ecran ecran;
+
 //Déclaration de l'instance monMenu du type MenuOLED
-MenuOLED monMenu;
+MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
+
+//Déclaration des instances de DELs
+DelPin rouge(4);
+DelPin verte(2);
 
 void setup()
 {
   Serial.begin(115200);    //Pour la communication série
   Serial.println(nomProg); //Transmission du nom du programme
 
+  // Initialisation des boutons et de l'écran
+  gauche.begin();
+  droite.begin();
+  haut.begin();
+  bas.begin();
+  selection.begin();
+  ecran.begin();
+
   //Initialisation du menu
   monMenu.begin();
+
+  rouge.begin(); //Initialisation de la DEL rouge
+  verte.begin(); //Initialisation de la DEL verte
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
   //Pour chaque item de type NUMERIQUE (ItemNumerique), les paramètres sont:
@@ -110,14 +136,25 @@ void setup()
 
 void loop()
 {
+  // Rafraîchissement des boutons et de l'écran
+  gauche.refresh();
+  droite.refresh();
+  haut.refresh();
+  bas.refresh();
+  selection.refresh();
+  ecran.refresh();
+
   monMenu.refresh(); //Pour permettre le fonctionnement du menu
+
+  rouge.refresh(); //Pour permettre le fonctionnement de la DEL rouge
+  verte.refresh(); //Pour permettre le fonctionnement de la DEL verte
 }
 
 //Définition des fonctions callback propes à chacun des items du menu
 void ajusteLED1()
 {
   //Ajuste la DEL rouge la valeur courante de noItemLED1 du menu
-  monMenu.rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
+  rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
 }
 
 
@@ -128,23 +165,23 @@ void ajusteLED2()
 
   if (valeur == 0)//Cas pour la valeur courante "0" correspondant à "Eteint"
   {
-    monMenu.verte.set(false);
+    verte.set(false);
   } 
   else if (valeur == 1)//Cas pour la valeur courante "1" correspondant à "Bas"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(8);
+    verte.set(true);
+    verte.setBrightness(8);
   } 
   else if (valeur == 2) //Cas pour la valeur courante "2" correspondant à "Moyen"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(30);
+    verte.set(true);
+    verte.setBrightness(30);
    
   }
   else if (valeur == 3) //Cas pour la valeur courante "3" correspondant à "Fort"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(100);
+    verte.set(true);
+    verte.setBrightness(100);
   }
 }
 void callBackItemX()

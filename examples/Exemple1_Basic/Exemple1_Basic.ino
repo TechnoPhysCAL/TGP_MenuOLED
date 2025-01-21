@@ -18,11 +18,12 @@ Résumé du fonctionnement du menu:
   
 Auteur: Jude Levasseur
 Date: 04 juillet 2019
-Modification : CB, sept 2020
+Modification : CB, jan. 2025
 */
 
 #include <MenuOLED.h>                        //Pour utiliser la librairie MenuOLED
 #include <BoutonPin.h>
+#include <Ecran.h>	
 #include <DelPin.h>
 const char nomProg[] = "Exemple1_Basic.ino"; //Nom du programme pour transmission sur terminal
 
@@ -42,26 +43,27 @@ char *niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
 int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 
-//Déclaration de l'instance monMenu du type MenuOLED
+//Déclaration des instances de boutons et de l'écran
 BoutonPin gauche(33);
 BoutonPin droite(39);
 BoutonPin haut(34);
 BoutonPin bas(35);
 BoutonPin selection(36);
-
 Ecran ecran;
 
+
+//Déclaration de l'instance monMenu du type MenuOLED
+MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
+
+//Déclaration des instances de DELs
 DelPin rouge(4);
 DelPin verte(2);
 
-
-MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
 
 void setup()
 {
   Serial.begin(115200);    //Pour la communication série
   Serial.println(nomProg); //Transmission du nom du programme
-
 
   ecran.begin();
   gauche.begin();
@@ -69,11 +71,13 @@ void setup()
   haut.begin();
   bas.begin();
   selection.begin();
+
+   //Initialisation du menu
+  monMenu.begin();
   
   rouge.begin();
   verte.begin();
-    //Initialisation de l'OLED et des boutons
-  monMenu.begin();
+
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
   //Pour chaque item de type NUMERIQUE (ItemNumerique), les paramètres sont:
@@ -111,7 +115,15 @@ void setup()
 
 void loop()
 {
+  ecran.refresh();
+  gauche.refresh();
+  droite.refresh();
+  haut.refresh();
+  bas.refresh();
+  selection.refresh();
+  
   monMenu.refresh(); //Pour permettre le fonctionnement du menu
+
   rouge.refresh();
   verte.refresh();
 }

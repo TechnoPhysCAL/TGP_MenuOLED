@@ -27,10 +27,13 @@ Résumé du fonctionnement du menu:
   
 Auteur: Jude Levasseur
 Date: 16 aout 2019
-Modification : CB, sept 2020
+Modification : CB, jan. 2025
 */
 
 #include <MenuOLED.h>                            //Pour utiliser la librairie MenuOLED
+#include <BoutonPin.h>
+#include <Ecran.h>	
+#include <DelPin.h>
 const char nomProg[] = "Exemple5_AsDisplay.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
@@ -42,8 +45,19 @@ void seuilCallback(void);  //Routine callback pour l'item X
 //Déclaration des variables utilisées pour le retour des numéros d'item du menu
 int noItemAlarme, noItemTemp, noItemSeuil;
 
+//Déclaration des instances de boutons et de l'écran
+BoutonPin gauche(33);
+BoutonPin droite(39);
+BoutonPin haut(34);
+BoutonPin bas(35);
+BoutonPin selection(36);
+Ecran ecran;
+
 //Déclaration de l'instance monMenu du type MenuOLED
-MenuOLED monMenu;
+MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
+
+//Déclaration des instances de DELs
+DelPin rouge(4);
 
 //Déclaration de variables utilitaires
 uint32_t lastMillis = 0;    //Pour retenir le temps
@@ -55,8 +69,18 @@ void setup()
   Serial.begin(115200);    //Pour la communication série
   Serial.println(nomProg); //Transmission du nom du programme
 
+  // Initialisation des boutons et de l'écran
+  gauche.begin();
+  droite.begin();
+  haut.begin();
+  bas.begin();
+  selection.begin();
+  ecran.begin();
+
   //Initialisation du menu
   monMenu.begin();
+
+  rouge.begin(); //Initialisation de la DEL rouge
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
   //Pour chaque item de type NUMERIQUE (ItemNumerique), les paramètres sont:
@@ -92,7 +116,17 @@ void setup()
 
 void loop()
 {
+  // Rafraîchissement des boutons et de l'écran
+  gauche.refresh();
+  droite.refresh();
+  haut.refresh();
+  bas.refresh();
+  selection.refresh();
+  ecran.refresh();
+
   monMenu.refresh(); //Pour permettre le fonctionnement du menu
+
+  rouge.refresh(); //Pour permettre le fonctionnement de la DEL rouge
 
   //Simulation rampe de température
   if (millis() - lastMillis > 200)
@@ -123,7 +157,7 @@ void loop()
 void alarmeCallback()
 {
   //Ajuste la DEL rouge selon la valeur courante de l'alarme
-  monMenu.rouge.set(monMenu.getItemValeur(noItemAlarme) != 0);
+  rouge.set(monMenu.getItemValeur(noItemAlarme) != 0);
 }
 void TempCallback()
 {

@@ -14,10 +14,13 @@ Note: Ce programme est conçu pour la carte PROTOTPHYS 2V1.
   
 Auteur: Jude Levasseur
 Date: 05 juillet 2019
-Modification : CB, sept 2020
+Modification : CB, jan. 2025
 */
 
 #include <MenuOLED.h>                            //Pour utiliser la librairie MenuOLED
+#include <BoutonPin.h>
+#include <Ecran.h>	
+#include <DelPin.h>
 const char nomProg[] = "Exemple3_MenuOnOff.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
@@ -37,29 +40,40 @@ char *niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
 int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 
-//Déclaration de l'instance monMenu du type MenuOLED
-MenuOLED monMenu;
+//Déclaration des instances de boutons et de l'écran
+BoutonPin gauche(33);
+BoutonPin droite(39);
+BoutonPin haut(34);
+BoutonPin bas(35);
+BoutonPin selection(36);
+Ecran ecran;
 
+//Déclaration de l'instance monMenu du type MenuOLED
+MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
+
+//Déclaration des instances de DELs
+DelPin rouge(4);
+DelPin verte(2);
 //Initialisation du message local pour restaurer le menu
 void initMessage()
 {
-  monMenu.ecran.clearDisplay();
-  monMenu.ecran.setCursor(0, 12);
-  monMenu.ecran.print("Maintenir les boutons");
-  monMenu.ecran.setCursor(0, 22);
-  monMenu.ecran.print("GAUCHE et DROITE");
-  monMenu.ecran.setCursor(0, 32);
-  monMenu.ecran.print("pour retour au menu.");
-  monMenu.ecran.display();
+  ecran.clearDisplay();
+  ecran.setCursor(0, 12);
+  ecran.print("Maintenir les boutons");
+  ecran.setCursor(0, 22);
+  ecran.print("GAUCHE et DROITE");
+  ecran.setCursor(0, 32);
+  ecran.print("pour retour au menu.");
+  ecran.display();
 }
 bool flagInitMessage = false;  //Flag pour initialisation du message local
 uint32_t oldmillis = millis(); //Pour retenir le temps
 void afficheTemps()
 {
-  monMenu.ecran.fillRect(0, 48, monMenu.ecran.width(), 10, BLACK); //Pour effacer la ligne
-  monMenu.ecran.setCursor(0, 48);
-  monMenu.ecran.print("Temps = ");
-  monMenu.ecran.print((millis() / 1000) % 3600); //Compte les secondes durant une heure
+  ecran.fillRect(0, 48, ecran.width(), 10, BLACK); //Pour effacer la ligne
+  ecran.setCursor(0, 48);
+  ecran.print("Temps = ");
+  ecran.print((millis() / 1000) % 3600); //Compte les secondes durant une heure
 }
 
 void setup()
@@ -67,8 +81,19 @@ void setup()
   Serial.begin(115200);    //Pour la commucation série
   Serial.println(nomProg); //Transmission du nom du programme
 
+  // Initialisation des boutons et de l'écran
+  gauche.begin();
+  droite.begin();
+  haut.begin();
+  bas.begin();
+  selection.begin();
+  ecran.begin();
+
   //Initialisation du menu
   monMenu.begin();
+
+  rouge.begin(); //Initialisation de la DEL rouge
+  verte.begin(); //Initialisation de la DEL verte
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
   //Pour chaque item de type NUMERIQUE (ItemNumerique), les paramètres sont:
@@ -107,13 +132,24 @@ void setup()
 
 void loop()
 {
-  monMenu.refresh(); //Pour permettre le fonctionnement du menu et de la plateforme ProtoTPhys
+    // Rafraîchissement des boutons et de l'écran
+  gauche.refresh();
+  droite.refresh();
+  haut.refresh();
+  bas.refresh();
+  selection.refresh();
+  ecran.refresh();
+
+  monMenu.refresh(); //Pour permettre le fonctionnement du menu
+
+  rouge.refresh(); //Pour permettre le fonctionnement de la DEL rouge
+  verte.refresh(); //Pour permettre le fonctionnement de la DEL verte
 
   //On verifie si le menu est OFF
   if (monMenu.getMenuOnOff() == 0)
   {
     //On verifie si les boutons GAUCHE t DROITE sont maintenus
-    if (monMenu.gauche.isOnLongPress() && monMenu.droite.isOnLongPress())
+    if (gauche.isOnLongPress() && droite.isOnLongPress())
     {
       flagInitMessage = false; //Remise à false de l'initialisation message local
       //On restaure le menu
@@ -146,7 +182,7 @@ void loop()
 void ajusteLED1()
 {
   //Ajuste la DEL rouge la valeur courante de noItemLED1 du menu
-  monMenu.rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
+  rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
 }
 
 void ajusteLED2()
@@ -156,23 +192,23 @@ void ajusteLED2()
 
   if (valeur == 0)//Cas pour la valeur courante "0" correspondant à "Eteint"
   {
-    monMenu.verte.set(false);
+    verte.set(false);
   } 
   else if (valeur == 1)//Cas pour la valeur courante "1" correspondant à "Bas"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(8);
+    verte.set(true);
+    verte.setBrightness(8);
   } 
   else if (valeur == 2) //Cas pour la valeur courante "2" correspondant à "Moyen"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(30);
+    verte.set(true);
+    verte.setBrightness(30);
    
   }
   else if (valeur == 3) //Cas pour la valeur courante "3" correspondant à "Fort"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(100);
+    verte.set(true);
+    verte.setBrightness(100);
   }
 }
 void callBackItemX()

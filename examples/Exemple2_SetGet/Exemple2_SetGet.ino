@@ -11,11 +11,14 @@ Note: Ce programme est conçu pour la carte PROTOTPHYS 2V1.
   
 Auteur: Jude Levasseur
 Date: 04 juillet 2019
-Modification : CB, sept 2020
+Modification : CB, jan. 2025
 */
 
 #include <MenuOLED.h>                         //Pour utiliser la librairie MenuOLED
 #include <Decodeur.h>                         //Pour décoder les messages du port série
+#include <BoutonPin.h>
+#include <Ecran.h>	
+#include <DelPin.h>
 
 const char nomProg[] = "Exemple2_SetGet.ino"; //Nom du programme pour transmission sur terminal
 
@@ -35,11 +38,23 @@ char *niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
 int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 
+//Déclaration des instances de boutons et de l'écran
+BoutonPin gauche(33);
+BoutonPin droite(39);
+BoutonPin haut(34);
+BoutonPin bas(35);
+BoutonPin selection(36);
+Ecran ecran;
+
 //Déclaration de l'instance monMenu du type MenuOLED
-MenuOLED monMenu;
+MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
+
+//Déclaration des instances de DELs
+DelPin rouge(4);
+DelPin verte(2);
 
 //Déclaration d'une variable Decodeur avec le port Serie
-Decodeur monDecodeur(&Serial, ' ', ENTIER);
+Decodeur monDecodeur(&Serial, ' ', DEC);
 
 //Impression du protocole avec le terminal
 void imprimeProtocole(void)
@@ -56,6 +71,14 @@ void setup()
   Serial.begin(115200);
 
   Serial.println(nomProg); //Transmission du nom du programme
+
+  // Initialisation des boutons et de l'écran
+  gauche.begin();
+  droite.begin();
+  haut.begin();
+  bas.begin();
+  selection.begin();
+  ecran.begin();
 
   //Initialisation du menu OLED
   monMenu.begin();
@@ -99,9 +122,21 @@ void setup()
 
 void loop()
 {
+  // Rafraîchissement des boutons et de l'écran
+  gauche.refresh();
+  droite.refresh();
+  haut.refresh();
+  bas.refresh();
+  selection.refresh();
+  ecran.refresh();
+
   monMenu.refresh(); //Pour permettre le fonctionnement du menu
+
+  rouge.refresh();
+  verte.refresh();
+  
   //Vérification d'une commande du termianl
-  if (monDecodeur.available())
+  if (monDecodeur.isAvailable())
   {
     char commande = monDecodeur.getCommand();
     switch (commande)
@@ -166,7 +201,7 @@ void loop()
 void ajusteLED1()
 {
   //Ajuste la DEL rouge la valeur courante de noItemLED1 du menu
-  monMenu.rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
+  rouge.set(monMenu.getItemValeur(noItemLED1) != 0);
 }
 
 void ajusteLED2()
@@ -176,23 +211,23 @@ void ajusteLED2()
 
   if (valeur == 0)//Cas pour la valeur courante "0" correspondant à "Eteint"
   {
-    monMenu.verte.set(false);
+    verte.set(false);
   } 
   else if (valeur == 1)//Cas pour la valeur courante "1" correspondant à "Bas"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(8);
+    verte.set(true);
+    verte.setBrightness(8);
   } 
   else if (valeur == 2) //Cas pour la valeur courante "2" correspondant à "Moyen"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(30);
+    verte.set(true);
+    verte.setBrightness(30);
    
   }
   else if (valeur == 3) //Cas pour la valeur courante "3" correspondant à "Fort"
   {
-    monMenu.verte.set(true);
-    monMenu.verte.setBrightness(100);
+    verte.set(true);
+    verte.setBrightness(100);
   }
 }
 void callBackItemX()
