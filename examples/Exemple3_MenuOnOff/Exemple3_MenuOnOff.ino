@@ -21,7 +21,7 @@ Modification : CB, jan. 2025
 #include <BoutonPin.h>
 #include <Ecran.h>	
 #include <DelPin.h>
-const char nomProg[] = "Exemple3_MenuOnOff.ino"; //Nom du programme pour transmission sur terminal
+String nomProg = "Exemple3_MenuOnOff.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
 //Il faut déclarer les fonctions callback du menu avant leur utilisation dans la définition du menu
@@ -38,7 +38,7 @@ int noItemLED1, noItemLED2, noItemX, noItemY, noItemZ, noItemMenuOnOff;
 //Déclaration des pointeurs de texte utile pour affichage en mode texte de l'item LED2
 String niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
-int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
+int nbChoixLED2 =4; 
 
 //Déclaration des instances de boutons et de l'écran
 BoutonPin gauche(33);
@@ -118,9 +118,9 @@ void setup()
 
   //Construction du menu par la définition de chacun des items
   noItemLED1 = monMenu.ajouterItemOnOff("LED 1  = ", &ajusteLED1, 0);
-  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, &niveauLED2[0]);
+  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, niveauLED2);
   noItemX = monMenu.ajouterItemNumerique("Item X = ", &callBackItemX, 0, 0, 512);
-  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -500000, 500000);
+  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -5000, 5000);
   noItemZ = monMenu.ajouterItemNumerique("Item Z = ", &callBackItemZ, 0, -10, 50);
   noItemMenuOnOff = monMenu.ajouterItemOnOff("Menu   = ", &callBackItemMenuOnOff, 1);
 

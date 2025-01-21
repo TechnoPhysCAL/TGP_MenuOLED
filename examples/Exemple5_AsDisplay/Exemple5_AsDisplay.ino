@@ -34,7 +34,7 @@ Modification : CB, jan. 2025
 #include <BoutonPin.h>
 #include <Ecran.h>	
 #include <DelPin.h>
-const char nomProg[] = "Exemple5_AsDisplay.ino"; //Nom du programme pour transmission sur terminal
+String nomProg = "Exemple5_AsDisplay.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
 //Il faut déclarer les fonctions callback du menu avant leur utilisation dans la définition du menu

@@ -41,7 +41,7 @@ int noItemLED1, noItemLED2, noItemX, noItemY, noItemZ;
 //Déclaration du tableau de pointeurs de texte utile pour affichage en mode texte de l'item LED2
 String niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
-int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
+int nbChoixLED2 = 4; //Calcul automatique (=4 pour le cas présent)
 
 //Déclaration des instances de boutons et de l'écran
 BoutonPin gauche(33);
@@ -49,12 +49,15 @@ BoutonPin droite(39);
 BoutonPin haut(34);
 BoutonPin bas(35);
 BoutonPin selection(36);
-Ecran ecran;
+Ecran ecran(128,64,&Wire,-1); //Initialisation de l'écran OLED
 
 
 //Déclaration de l'instance monMenu du type MenuOLED
 MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
 
+//Déclaration des instances de DELs
+DelPin rouge(4);
+DelPin verte(2);
 
 
 void setup()
@@ -62,7 +65,7 @@ void setup()
   Serial.begin(115200);    //Pour la communication série
   Serial.println(nomProg); //Transmission du nom du programme
 
-  ecran.begin();
+  ecran.begin(0x02,0x3c);
   gauche.begin();
   droite.begin();
   haut.begin();
@@ -72,7 +75,8 @@ void setup()
    //Initialisation du menu
   monMenu.begin();
   
-
+  rouge.begin();
+  verte.begin();
 
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
@@ -120,7 +124,8 @@ void loop()
   
   monMenu.refresh(); //Pour permettre le fonctionnement du menu
 
-
+  rouge.refresh();
+  verte.refresh();
 }
 
 //Définition des fonctions callback propes à chacun des items du menu
@@ -149,6 +154,12 @@ void ajusteLED2()
     verte.set(true);
     verte.setBrightness(30);
    
+  }
+  else if (valeur == 3) //Cas pour la valeur courante "3" correspondant à "Fort"
+  {
+    verte.set(true);
+    verte.setBrightness(100);
+  }
 }
 
 void callBackItemX()
