@@ -25,7 +25,7 @@ Modification : CB, jan. 2025
 #include <BoutonPin.h>
 #include <Ecran.h>	
 #include <DelPin.h>
-const char nomProg[] = "Exemple1_Basic.ino"; //Nom du programme pour transmission sur terminal
+String nomProg = "Exemple1_Basic.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
 //Il faut déclarer les fonctions callback du menu avant leur utilisation dans la définition du menu
@@ -39,7 +39,7 @@ void callBackItemZ(void); //Routine callback pour l'item Z
 int noItemLED1, noItemLED2, noItemX, noItemY, noItemZ;
 
 //Déclaration du tableau de pointeurs de texte utile pour affichage en mode texte de l'item LED2
-char *niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
+String niveauLED2[] = {"Éteint", "Bas", "Moyen", "Fort"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
 int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 
@@ -55,9 +55,6 @@ Ecran ecran;
 //Déclaration de l'instance monMenu du type MenuOLED
 MenuOLED monMenu(&ecran,&gauche,&droite,&haut,&bas,&selection);
 
-//Déclaration des instances de DELs
-DelPin rouge(4);
-DelPin verte(2);
 
 
 void setup()
@@ -75,8 +72,7 @@ void setup()
    //Initialisation du menu
   monMenu.begin();
   
-  rouge.begin();
-  verte.begin();
+
 
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
@@ -102,9 +98,9 @@ void setup()
 
   //Construction du menu par la définition de chacun des items
   noItemLED1 = monMenu.ajouterItemOnOff("LED 1  = ", &ajusteLED1, 0);
-  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, &niveauLED2[0]); //Attention au dernier paramètre
+  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, niveauLED2); //Attention au dernier paramètre
   noItemX = monMenu.ajouterItemNumerique("Item X = ", &callBackItemX, 0, 0, 512);
-  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -500000, 500000);
+  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -5000, 5000);
   noItemZ = monMenu.ajouterItemNumerique("Item Z = ", &callBackItemZ, 0, -10, 50);
 
   //Impression de la ligne Titre
@@ -124,8 +120,7 @@ void loop()
   
   monMenu.refresh(); //Pour permettre le fonctionnement du menu
 
-  rouge.refresh();
-  verte.refresh();
+
 }
 
 //Définition des fonctions callback propes à chacun des items du menu
@@ -154,12 +149,6 @@ void ajusteLED2()
     verte.set(true);
     verte.setBrightness(30);
    
-  }
-  else if (valeur == 3) //Cas pour la valeur courante "3" correspondant à "Fort"
-  {
-    verte.set(true);
-    verte.setBrightness(100);
-  }
 }
 
 void callBackItemX()

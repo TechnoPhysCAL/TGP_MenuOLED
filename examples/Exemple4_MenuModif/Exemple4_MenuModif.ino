@@ -54,12 +54,12 @@ void callBackItemZ(void); //Routine callback pour l'item Z
 int noItemLED1, noItemLED2, noItemX, noItemY, noItemZ;
 
 //Déclaration du tableau de pointeurs de texte utile pour affichage en mode texte de l'item LED2
-char *niveauLED2[] = {"Éteint_blablablabla", "Bas", "Moyen", "Fort"}; //Premier élément trop long pour affichage; il sera tronqué.
+String niveauLED2[] = {"Éteint_blablablabla", "Bas", "Moyen", "Fort"}; //Premier élément trop long pour affichage; il sera tronqué.
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
 int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 
 //Déclaration du tableau de pointeurs de texte utile pour affichage en mode texte de l'item X
-char *xText[] = {"A", "B", "C", "D"};
+String xText[] = {"A", "B", "C", "D"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
 int nbChoix_itemX = sizeof(xText) / sizeof(xText[0]); //Calcul automatique
 
@@ -102,23 +102,23 @@ void setup()
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
   //Pour chaque item de type NUMERIQUE (ItemNumerique), les paramètres sont:
-  //  - char *Etiquette; pointeur sur une string,
+  //  - String Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item
   //  - int ValeurMin; valeur minimale de l'item
   //  - int ValeurMax, valeur maximale de l'item
   //  - bool editable, true(defaut)=item éditable, false=item non editable
   //Pour chaque item de type ON_OFF (ItemOnOff), les paramètres sont:
-  //  - char *Etiquette; pointeur sur une string,
+  //  - String Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item, 0=Off et 1=On
   //  - bool editable, true(defaut)=item éditable, false=item non editable
   //Pour chaque item de type TEXTE (ItemTexte), les paramètres sont:
-  //  - char *Etiquette; pointeur sur une string,
+  //  - String Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item
   //  - int nbChoix; nombre de choix différents de texte à afficher,
-  //  - char **choixTexte; pointeur sur tableau de pointeurs de de chaines charactère pour les choix de texte à afficher
+  //  - String *choixTexte; pointeur sur tableau de pointeurs de de chaines charactère pour les choix de texte à afficher
   //  - bool editable, true(defaut)=item éditable, false=item non éditable
 
   //Construction du menu par la définition de chacun des items
@@ -228,7 +228,7 @@ void callBackItemY()
   {
     //Cas pour la valeur courante "3"
     //Rotation des valeurs texte de l'item X
-    char *ptrbuf;
+    String ptrbuf;
     ptrbuf = xText[0];                 //On conserve le pointeur de l'élément 0
     xText[0] = xText[1];               //Décalage du pointeur 1 dans pointeur 0
     xText[1] = xText[2];               //Décalage du pointeur 2 dans pointeur 1
