@@ -86,13 +86,13 @@ String _stringTitre, _stringStatus;                               //Pour la cons
 //Structure de la composition d'un item de menu
 typedef struct menuItem
 {
-  const char *label;         //Pointeur sur une chaine pour le nom de l'item
+  String label;         //Pointeur sur une chaine pour le nom de l'item
   void (*callbackFct)(void); //Pointeur sur fonction callback
   int value;                 //Variable pour la valeur courante de l'item
   int minVal;                //Valeur minimale de la valeur courante
   int maxVal;                //Valeur maximale de la valeur courante
   int typeAffichage;         //0=affichage integer, 1=affichage boolean(ON ou OFF), 2=affichage texte via un pointeur sur tableau de pointeurs
-  char **valTXT;             //Pointeur sur tableau de pointeurs de valeur texte pour affichage
+  String *valTXT;             //Pointeur sur tableau de pointeurs de valeur texte pour affichage
   bool editable;             //Permettre ou non l'édition de l'item
 } _menuItem_t;
 _menuItem_t *_menuTab[_NB_MAX_ITEM]; //Tableau de pointeurs de l'ensemble du menu
@@ -145,7 +145,7 @@ void MenuOLED::begin()
 /****************************************************************
 Méthode publique pour ajouter un item de type NUMERIQUE au menu
 Inputs:
-  const char *Etiquette : pointeur sur une chaine pour l'étiquette de l'item, 
+  String Etiquette : pointeur sur une chaine pour l'étiquette de l'item, 
   void(*callbackFct)()  : pointeur sur la fonction callback
   int ValeurInitiale    : valeur initiale de l'item
   int ValeurMin         : valeur minimale de l'item
@@ -156,7 +156,7 @@ Inputs:
         : retourne -1 si les paramètres sont invalides pour créer ce type d'item
 Note: 
 ****************************************************************/
-int MenuOLED::ajouterItemNumerique(const char *Etiquette, void (*callbackFct)(), int ValeurInitiale, int ValeurMin, int ValeurMax, bool editable)
+int MenuOLED::ajouterItemNumerique(String Etiquette, void (*callbackFct)(), int ValeurInitiale, int ValeurMin, int ValeurMax, bool editable)
 {
   int returnVal = 0;
   //Test de validité des paramètres
@@ -182,7 +182,7 @@ int MenuOLED::ajouterItemNumerique(const char *Etiquette, void (*callbackFct)(),
 /****************************************************************
 Méthode publique pour ajouter un item de type ON-OFF au menu
 Inputs:
-  const char *Etiquette : pointeur sur une chaine pour l'étiquette de l'item, 
+  String Etiquette : pointeur sur une chaine pour l'étiquette de l'item, 
   void(*callbackFct)()  : pointeur sur la fonction callback
   int ValeurInitiale    : valeur initiale de l'item; 0 pour OFF et 1 pour ON
   bool editable         : true(defaut)=item éditable, false=item non éditable
@@ -191,7 +191,7 @@ Inputs:
         : retourne -1 si les paramètres sont invalides pour créer ce type d'item
 Note: 
 ****************************************************************/
-int MenuOLED::ajouterItemOnOff(const char *Etiquette, void (*callbackFct)(), int ValeurInitiale, bool editable)
+int MenuOLED::ajouterItemOnOff(String Etiquette, void (*callbackFct)(), int ValeurInitiale, bool editable)
 {
   int returnVal = 0;
   //Test de validité des paramètres
@@ -209,20 +209,20 @@ int MenuOLED::ajouterItemOnOff(const char *Etiquette, void (*callbackFct)(), int
 /****************************************************************
 Méthode publique pour ajouter un item de type TEXTE au menu
 Inputs:
-  const char *Etiquette : pointeur sur une chaine pour l'étiquette de l'item, 
+  String Etiquette : pointeur sur une chaine pour l'étiquette de l'item, 
   void(*callbackFct)()  : pointeur sur la fonction callback
   int ValeurInitiale    : valeur initiale de l'item
   int nbChoix           : nombre de choix différents de texte
                         : devrait être égale à la dimension du tableau de chaines caractères
-  char **choixTexte     : pointeur sur tableau de pointeurs de chaine de caractère pour les choix de texte à afficher
+  String *choixTexte     : pointeur sur tableau de pointeurs de chaine de caractère pour les choix de texte à afficher
   bool editable         : true(defaut)=item éditable, false=item non éditable
   Output:
   int   : retourne le numéro d'identification de l'item; la numérotation débute à 0.
         : retourne -1 si les paramètres sont invalides pour créer ce type d'item
 Note: Il est primordial que le paramètre "nbChoix" soit égal (ou inférieur) à la  
-      dimension du tableau texte pointé par "char **choixTexte"
+      dimension du tableau texte pointé par "String *choixTexte"
 ****************************************************************/
-int MenuOLED::ajouterItemTexte(const char *Etiquette, void (*callbackFct)(), int ValeurInitiale, int nbChoix, char **choixTexte, bool editable)
+int MenuOLED::ajouterItemTexte(String Etiquette, void (*callbackFct)(), int ValeurInitiale, int nbChoix, String choixTexte[], bool editable)
 {
   int returnVal = 0;
   //Test de validité des paramètres
@@ -403,12 +403,12 @@ void MenuOLED::refresh()
 /****************************************************************
 Méthode publique pour imprimer la ligne réservée au TITRE du menu.
 Inputs:
-  char* TitreEtiquette  : pointeur sur la chaine de caractère du titre
+  String TitreEtiquette  : pointeur sur la chaine de caractère du titre
 Output:
   Aucun
 Note: 
 ****************************************************************/
-void MenuOLED::imprimeLigneTitreOLED(char *TitreEtiquette)
+void MenuOLED::imprimeLigneTitreOLED(String TitreEtiquette)
 {
   _stringTitre = TitreEtiquette; //Pour conserver le titre
   restoreTitreOLED();
@@ -417,12 +417,12 @@ void MenuOLED::imprimeLigneTitreOLED(char *TitreEtiquette)
 /****************************************************************
 Méthode publique pour imprimer la ligne réservée au STATUS du menu.
 Inputs:
-  char* StatusEtiquette  : pointeur sur la chaîne de caractère du status
+  String StatusEtiquette  : pointeur sur la chaîne de caractère du status
 Output:
   Aucun
 Note: 
 ****************************************************************/
-void MenuOLED::imprimeLigneStatusOLED(char *StatusEtiquette)
+void MenuOLED::imprimeLigneStatusOLED(String StatusEtiquette)
 {
   _stringStatus = StatusEtiquette; //Pour conserver le status
   restoreStatusOLED();
@@ -578,18 +578,18 @@ void MenuOLED::actualiserUnItem(int noItem)
 Fonction universelle pour l'ajout d'un item au menu. Elle permet
 un code universel des différents types d'Item; NUMERIQUE, ON-OFF ou TEXTE
 Inputs:
-  const char *Label     : pointeur sur une chaine pour l'étiquette de l'item, 
+  String Label     : pointeur sur une chaine pour l'étiquette de l'item, 
   void(*callbackFct)()  : pointeur sur la fonction callback
   int ValeurInitiale    : valeur initiale de l'item
   int ValeurMin         : valeur minimale de l'item
   int ValeurMax         : valeur maximale de l'item
   int typeAffichage     : 0= type NUMERIQUE, 1= type ON-OFF et 2= type TEXTE 
-  char **choixTexte     : pointeur sur tableau de pointeurs de chaine de charactère pour les choix de texte à afficher
+  String *choixTexte     : pointeur sur tableau de pointeurs de chaine de charactère pour les choix de texte à afficher
 Output:
   int   : retourne le numéro d'identification de l'item; la numérotation débute à 0.
 Note:
 ****************************************************************/
-int MenuOLED::addItemMenu(const char *Label, void (*callbackFct)(), int ValeurInitiale, int ValeurMin, int ValeurMax, int typeAffichage, char **choixTexte, bool editable)
+int MenuOLED::addItemMenu(String Label, void (*callbackFct)(), int ValeurInitiale, int ValeurMin, int ValeurMax, int typeAffichage, String choixTexte[], bool editable)
 {
   //Création d'un nouvel Item de menu
   int noItem = _nbMenuItem;
@@ -654,7 +654,7 @@ void MenuOLED::printItemMenuOLED(int16_t menuItem)
     else if (_menuTab[menuItem]->typeAffichage == AFFICHETEXTE)
     {
       //Affichage via tableau de texte
-      char **pi = _menuTab[menuItem]->valTXT;
+      String *pi = _menuTab[menuItem]->valTXT;
       _stringOne += String(pi[_menuTab[menuItem]->value]);
     }
     //Il faut limiter la ligne au nombre de caractères de l'affichage moins 1 (pour caractère édition)
@@ -824,7 +824,7 @@ int16_t MenuOLED::add_and_saturate(int16_t x, int16_t y)
 /****************************************************************
 Fonction pour restaurer le Titre sur OLED
 Inputs:
-  char* TitreEtiquette  : pointeur sur la chaîne de caractère du titre
+  String TitreEtiquette  : pointeur sur la chaîne de caractère du titre
 Output:
   Aucun
 Note: 
@@ -859,4 +859,4 @@ void MenuOLED::restoreStatusOLED()
   ecran->print(_stringStatus);
   ecran->drawLine(0, ecran->height() - 9, ecran->width() - 1, ecran->height() - 9, WHITE); //Trace ligne en-dessous de l'entête
 
-} //FIN MenuOLED::restoreStatusOLED()
+} //FIN MenuOLED::restoreStatusOLED
