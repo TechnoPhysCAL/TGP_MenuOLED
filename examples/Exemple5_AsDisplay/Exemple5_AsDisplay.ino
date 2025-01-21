@@ -34,7 +34,7 @@ Modification : CB, jan. 2025
 #include <BoutonPin.h>
 #include <Ecran.h>	
 #include <DelPin.h>
-String nomProg = "Exemple5_AsDisplay.ino"; //Nom du programme pour transmission sur terminal
+const char nomProg[] = "Exemple5_AsDisplay.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
 //Il faut déclarer les fonctions callback du menu avant leur utilisation dans la définition du menu
@@ -84,23 +84,23 @@ void setup()
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
   //Pour chaque item de type NUMERIQUE (ItemNumerique), les paramètres sont:
-  //  - String Etiquette; pointeur sur une string,
+  //  - char *Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item
   //  - int ValeurMin; valeur minimale de l'item
   //  - int ValeurMax, valeur maximale de l'item
   //  - bool editable, true(defaut)=item éditable, false=item non editable
   //Pour chaque item de type ON_OFF (ItemOnOff), les paramètres sont:
-  //  - String Etiquette; pointeur sur une string,
+  //  - char *Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item, 0=Off et 1=On
   //  - bool editable, true(defaut)=item éditable, false=item non editable
   //Pour chaque item de type TEXTE (ItemTexte), les paramètres sont:
-  //  - String Etiquette; pointeur sur une string,
+  //  - char *Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item
   //  - int nbChoix; nombre de choix différents de texte à afficher,
-  //  - String *choixTexte; pointeur sur tableau de pointeurs de de chaines charactère pour les choix de texte à afficher
+  //  - char **choixTexte; pointeur sur tableau de pointeurs de de chaines charactère pour les choix de texte à afficher
   //  - bool editable, true(defaut)=item éditable, false=item non éditable
 
   //Construction du menu par la définition de chacun des items

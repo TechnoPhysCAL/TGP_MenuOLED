@@ -58,7 +58,7 @@ void callBackItemX(void);
 
 int noItemLED1, noItemLED2, noItemX;
 
-char *niveauLED2[] = {"Eteint", "Bas", "Moyen", "Fort"};
+String niveauLED2[] = {"Eteint", "Bas", "Moyen", "Fort"};
 int nbChoixLED2 = 4; 
 
 //Déclaration des instances de boutons et de l'écran
@@ -82,7 +82,7 @@ void setup()
   monMenu.begin();
 
   noItemLED1 = monMenu.ajouterItemOnOff("LED 1  = ", &ajusteLED1, 0);
-  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, &niveauLED2[0]);
+  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, niveauLED2);
   noItemX = monMenu.ajouterItemNumerique("Item X = ", &callBackItemX, 0, 0, 512);
 
   monMenu.imprimeLigneTitreOLED("Exemple1_Basic");
@@ -188,23 +188,22 @@ noItem = monMenu.ajouterItemOnOff("Etiquette", &callbackFct, ValeurInitiale, edi
 
 ---
 ```cpp
-int ajouterItemTexte(const char *Etiquette, void(*callbackFct)(), int ValeurInitiale, int nbChoix, char **choixTexte, bool editable)
+int ajouterItemTexte(const char *Etiquette, void(*callbackFct)(), int ValeurInitiale, int nbChoix, String choixTexte[], bool editable)
 ```
 - Description
 Méthode publique pour ajouter un item de type TEXTE au menu.
 - Syntaxe
 ```cpp
-noItem = monMenu.ajouterItemTexte("Etiquette", &callbackFct, ValeurInitiale, nbChoix, & choixTexte, editable);
+noItem = monMenu.ajouterItemTexte("Etiquette", &callbackFct, ValeurInitiale, nbChoix, choixTexte, editable);
 ```
 - Paramètres
    - 	  const char *Etiquette 	: pointeur sur une chaîne pour l'étiquette de l'item, 
    - 	  void (*callbackFct)()  	: pointeur sur la fonction callback
    - 	  int ValeurInitiale    	: valeur initiale de l'item
    - 	  int nbChoix           	: nombre de choix différents de texte
-   - 	  char **choixTexte     	: pointeur sur tableau de pointeurs de chaîne de caractère
-                                                 pour les choix de textes à afficher
+   - 	  String choixTexte[]     	: tableau de String pour les choix de textes à afficher
    - 	  bool editable         	: true(defaut)=item éditable, false=item non éditable
-Note: Il est primordial que le paramètre "nbChoix" soit égal (ou inférieur) à la dimension du tableau texte pointé par "char **choixTexte".
+Note: Il est primordial que le paramètre "nbChoix" soit égal (ou inférieur) à la dimension du tableau texte pointé par "choixTexte".
 
 - Valeur renvoyéee
    - 	  int    : retourne le numéro d'identification de l'item; la numérotation débute à zéro.
@@ -230,7 +229,7 @@ Aucune
 
 ---
 ```cpp
-void imprimeLigneTitreOLED(char* TitreEtiquette)
+void imprimeLigneTitreOLED(String TitreEtiquette)
 ```
 - Description
 Méthode publique pour imprimer la ligne réservée au TITRE du menu.
@@ -245,7 +244,7 @@ Aucune
 
 ---
 ```cpp
-void imprimeLigneStatusOLED (char* StatusEtiquette)
+void imprimeLigneStatusOLED (String StatusEtiquette)
 ```
 
 - Description

@@ -4,10 +4,6 @@
 #include "Bouton.h"
 #include "Adafruit_SSD1306.h"
 
-#ifndef INT_MAX
-#define INT_MAX 32767     
-#endif
-
 #define _NB_MAX_ITEM 128          //Nombre maximale d'item dans le menu
 #define ITEM_NON_EDITABLE false   //Pour méthodes d'ajout d'item
 #define ITEM_EDITABLE true        //Pour méthodes d'ajout d'item
@@ -24,7 +20,7 @@ public:
     void begin();                                                                                                                                   //Pour initialiser
     int ajouterItemNumerique(String Etiquette, void (*callbackFct)(), int ValeurInitiale, int ValeurMin, int ValeurMax, bool editable = true); //Pour ajouter un item de type Numérique au menu
     int ajouterItemOnOff(String Etiquette, void (*callbackFct)(), int ValeurInitiale, bool editable = true);                                   //Pour ajouter un item de type On-Off au menu, 0=OFF, 1=ON
-    int ajouterItemTexte(String Etiquette, void (*callbackFct)(), int ValeurInitiale, int nbChoix, String choixTexte[], bool editable = true);   //Pour ajouter un item de type texte au menu;
+    int ajouterItemTexte(String Etiquette, void (*callbackFct)(), int ValeurInitiale, int nbChoix, String* choixTexte, bool editable = true);   //Pour ajouter un item de type texte au menu;
     void refresh(void);                                                                                                                             //Pour rafraichir le menu
     void imprimeLigneTitreOLED(String TitreEtiquette);                                                                                               //Fonction pour imprimer la ligne de Titre
     void imprimeLigneStatusOLED(String StatusEtiquette);                                                                                             //Fonction pour imprimer la ligne de Status

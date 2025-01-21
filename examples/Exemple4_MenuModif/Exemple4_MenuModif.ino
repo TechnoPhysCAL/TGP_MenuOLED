@@ -40,7 +40,7 @@ Modification : CB, jan. 2025
 #include <BoutonPin.h>
 #include <Ecran.h>	
 #include <DelPin.h>
-String nomProg = "Exemple4_MenuModif.ino"; //Nom du programme pour transmission sur terminal
+const char nomProg[] = "Exemple4_MenuModif.ino"; //Nom du programme pour transmission sur terminal
 
 //Prototypes des fonctions pour callback du menu:
 //Il faut déclarer les fonctions callback du menu avant leur utilisation dans la définition du menu
@@ -54,17 +54,17 @@ void callBackItemZ(void); //Routine callback pour l'item Z
 int noItemLED1, noItemLED2, noItemX, noItemY, noItemZ;
 
 //Déclaration du tableau de pointeurs de texte utile pour affichage en mode texte de l'item LED2
-String niveauLED2[] = {"Éteint_blablablabla", "Bas", "Moyen", "Fort"}; //Premier élément trop long pour affichage; il sera tronqué.
+char *niveauLED2[] = {"Éteint_blablablabla", "Bas", "Moyen", "Fort"}; //Premier élément trop long pour affichage; il sera tronqué.
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
-int nbChoixLED2 = 4; 
+int nbChoixLED2 = sizeof(niveauLED2) / sizeof(niveauLED2[0]); //Calcul automatique (=4 pour le cas présent)
 
 //Déclaration du tableau de pointeurs de texte utile pour affichage en mode texte de l'item X
-String xText[] = {"A", "B", "C", "D"};
+char *xText[] = {"A", "B", "C", "D"};
 //Nombre d'éléments texte de niveauLED2[], nécessaire pour pour affichage en mode texte de l'item LED2
-int nbChoix_itemX = 4;
+int nbChoix_itemX = sizeof(xText) / sizeof(xText[0]); //Calcul automatique
 
 //Variable pour le l'étquette de l'Item Z; pouvant ainsi être modifiable
-String itemZ_Etiquette= "Item Z = ";
+char itemZ_Etiquette[20] = "Item Z = ";
 
 //Déclaration des instances de boutons et de l'écran
 BoutonPin gauche(33);
@@ -102,30 +102,30 @@ void setup()
 
   //Paramètres de chaque type d'item du menu (voir "MenuOLED.h"):
   //Pour chaque item de type NUMERIQUE (ItemNumerique), les paramètres sont:
-  //  - String Etiquette; pointeur sur une string,
+  //  - char *Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item
   //  - int ValeurMin; valeur minimale de l'item
   //  - int ValeurMax, valeur maximale de l'item
   //  - bool editable, true(defaut)=item éditable, false=item non editable
   //Pour chaque item de type ON_OFF (ItemOnOff), les paramètres sont:
-  //  - String Etiquette; pointeur sur une string,
+  //  - char *Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item, 0=Off et 1=On
   //  - bool editable, true(defaut)=item éditable, false=item non editable
   //Pour chaque item de type TEXTE (ItemTexte), les paramètres sont:
-  //  - String Etiquette; pointeur sur une string,
+  //  - char *Etiquette; pointeur sur une string,
   //  - void(*callbackFct)(); pointeur sur fonction callback
   //  - int ValeurInitiale; valeur initiale de l'item
   //  - int nbChoix; nombre de choix différents de texte à afficher,
-  //  - String *choixTexte; pointeur sur tableau de pointeurs de de chaines charactère pour les choix de texte à afficher
+  //  - char **choixTexte; pointeur sur tableau de pointeurs de de chaines charactère pour les choix de texte à afficher
   //  - bool editable, true(defaut)=item éditable, false=item non éditable
 
   //Construction du menu par la définition de chacun des items
   noItemLED1 = monMenu.ajouterItemOnOff("LED 1  = ", &ajusteLED1, 0);
-  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, niveauLED2); //Attention au dernier paramètre
-  noItemX = monMenu.ajouterItemTexte("Item X = ", &callBackItemX, 0, nbChoix_itemX, xText);
-  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -5000, 5000);
+  noItemLED2 = monMenu.ajouterItemTexte("LED 2  = ", &ajusteLED2, 0, nbChoixLED2, &niveauLED2[0]); //Attention au dernier paramètre
+  noItemX = monMenu.ajouterItemTexte("Item X = ", &callBackItemX, 0, nbChoix_itemX, &xText[0]);
+  noItemY = monMenu.ajouterItemNumerique("Item Y = ", &callBackItemY, 0, -500000, 500000);
   noItemZ = monMenu.ajouterItemNumerique(itemZ_Etiquette, &callBackItemZ, 0, -10, 50); //L'étiquette est référencée à une variable; elle peut donc être modifiée.
 
   //Impression de la ligne Titre
@@ -219,14 +219,21 @@ void callBackItemY()
   }
   else if (valeur == 2)
   {
+    //Cas pour la valeur courante "2"
+    //Modification de l'étiquette de l'item X pour valeur 2 de l'item Y
+    sprintf(itemZ_Etiquette, "Coco = "); //Modification de la variable caractère utilisée pour cette étiquette
+    monMenu.actualiserUnItem(noItemZ);   //Pour forcer le rafraichissement de cette ligne sans modification de la valeur courante
+  }
+  else if (valeur == 3)
+  {
     //Cas pour la valeur courante "3"
     //Rotation des valeurs texte de l'item X
-    
-    String temp = xText[0];                 //On conserve le pointeur de l'élément 0
+    char *ptrbuf;
+    ptrbuf = xText[0];                 //On conserve le pointeur de l'élément 0
     xText[0] = xText[1];               //Décalage du pointeur 1 dans pointeur 0
     xText[1] = xText[2];               //Décalage du pointeur 2 dans pointeur 1
     xText[2] = xText[3];               //Décalage du pointeur 3 dans pointeur 2
-    xText[3] = temp;                 //Récupération du pointeur 0 dans pointeur 3
+    xText[3] = ptrbuf;                 //Récupération du pointeur 0 dans pointeur 3
     monMenu.actualiserUnItem(noItemX); //Pour forcer le rafraichissement de cette ligne sans modification de la valeur courante
   }
 }
